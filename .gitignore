@@ -197,3 +197,5 @@ pyrightconfig.json
 .DS_Store
 
 default_presets.json
+
+*.db

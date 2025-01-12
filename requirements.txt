@@ -10,3 +10,4 @@ pyjwt
 jwcrypto
 sqlmodel
 bcrypt
+greenlet

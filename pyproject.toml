@@ -84,9 +84,7 @@ relative_files = true
 asyncio_mode = "auto"
 addopts = "--cov=app --cov-report html --cov-report xml"
 env = [
-    "MONGO_URI=mongodb://test:test@localhost:27021/test?authSource=admin",
-    "MECAB_URL=http://localhost:8096",
-    "RAG_URL=http://4gpu3.deephigh.net:8301",
-    "LEVEL=TEST",
-    "IMPORTER_API_KEY=test",
+    "DB_URI=sqlite+aiosqlite:///test.db",
+    "SECRET_KEY=test",
+    "ACCESS_TOKEN_EXPIRE_MINUTES=30",
 ]
