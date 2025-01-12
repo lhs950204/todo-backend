@@ -8,3 +8,4 @@ colorlog
 cryptography
 pyjwt
 jwcrypto
+sqlmodel
