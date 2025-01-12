@@ -7,6 +7,7 @@ from app.core.db import engine
 from sqlmodel import SQLModel, delete
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.core.security import get_password_hash
 from app.core.settings import settings
 from app.depends.db import SessionDep
 from app.main import app
@@ -24,7 +25,6 @@ async def reset_db():
 async def db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSession(bind=engine) as session:
         try:
-            print("db")
             yield session
         finally:
             await session.rollback()
@@ -37,7 +37,7 @@ app.dependency_overrides[SessionDep] = db
 async def default_user(db: AsyncSession):
     user = User(
         email="test@example.com",
-        hashed_password="test",
+        hashed_password=get_password_hash("test"),
         name="test",
     )
     db.add(user)
@@ -49,3 +49,12 @@ async def default_user(db: AsyncSession):
 def client() -> Generator[TestClient, None, None]:
     with TestClient(app) as c:
         yield c
+
+
+@pytest.fixture()
+async def login_user(client: TestClient):
+    response = client.post(
+        "/auth/login",
+        json={"email": "test@example.com", "password": "test"},
+    )
+    return response.json()

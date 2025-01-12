@@ -28,3 +28,14 @@ async def test_register_user_duplicate(client: TestClient, default_user: User):
         },
     )
     assert response.status_code == 400
+
+
+async def test_get_user(client: TestClient, login_user):
+    response = client.get(
+        f"/user",
+        headers={"Authorization": f"Bearer {login_user['access_token']}"},
+    )
+    assert response.status_code == 200
+    assert response.json()["email"] == "test@example.com"
+    assert response.json()["name"] == "test"
+    assert "hashed_password" not in response.json()
