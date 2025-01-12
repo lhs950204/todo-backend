@@ -8,7 +8,7 @@ from typing import Optional, Union
 
 from fastapi import FastAPI, Path, Query, UploadFile
 
-from .models import (
+from ._models import (
     CreateGoalBodyDto,
     CreateNoteBodyDto,
     CreateTodoBodyDto,
