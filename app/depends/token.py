@@ -1,7 +1,8 @@
-from fastapi import Header, HTTPException
+from fastapi import HTTPException, Security
+from fastapi.security import APIKeyHeader
 
 
-def get_token_from_header(authorization: str = Header(None)) -> str:
+def get_token_from_header(authorization: str = Security(APIKeyHeader(name="Authorization"))) -> str:
     if not authorization:
         raise HTTPException(
             status_code=401,

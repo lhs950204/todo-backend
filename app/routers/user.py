@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.core.security import get_password_hash
+from app.depends.user import UserDepends
 from app.models.user import User
 from app.schema.user import UserRegisterSchema
 
@@ -16,5 +17,5 @@ async def register_user(user_in: UserRegisterSchema):
 
 
 @router.get("", response_model=User, response_model_exclude={"hashed_password"})
-async def get_user(user_id: int):
+async def get_user(user: UserDepends):
     raise
