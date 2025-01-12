@@ -9,3 +9,4 @@ cryptography
 pyjwt
 jwcrypto
 sqlmodel
+bcrypt
