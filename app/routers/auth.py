@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(prefix="/auth")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-@router.post("login")
+@router.post("/login")
 async def login():
     raise
 
