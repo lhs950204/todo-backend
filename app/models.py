@@ -12,7 +12,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 class UserServiceResponseDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     id: float
     email: str
@@ -23,50 +23,50 @@ class UserServiceResponseDto(BaseModel):
 
 class ErrorResponsePayload(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     message: str
 
 
 class LoginBodyDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     email: str
     password: str
 
 
 class SortOrder(Enum):
-    oldest = 'oldest'
-    newest = 'newest'
+    oldest = "oldest"
+    newest = "newest"
 
 
 class FindGoalsQuery(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     cursor: Optional[float] = None
     size: Optional[float] = 20
-    sortOrder: Optional[SortOrder] = 'oldest'
+    sortOrder: Optional[SortOrder] = "oldest"
 
 
 class CreateGoalBodyDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     title: str
 
 
 class UpdateGoalBodyDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     title: str
 
 
 class FindNotesQueryDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     goalId: Optional[float] = None
     cursor: Optional[float] = None
@@ -75,7 +75,7 @@ class FindNotesQueryDto(BaseModel):
 
 class CreateNoteBodyDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     todoId: float
     title: str
@@ -85,7 +85,7 @@ class CreateNoteBodyDto(BaseModel):
 
 class UpdateNoteBodyDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     title: Optional[str] = None
     content: Optional[str] = None
@@ -99,7 +99,7 @@ class Goal(BaseModel):
 
 class TodoResponseDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     noteId: float
     done: bool
@@ -116,12 +116,12 @@ class TodoResponseDto(BaseModel):
 
 class FindTodosQueryDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     goalId: Optional[float] = None
     done: Optional[bool] = Field(
         None,
-        description='done이 true이면 완료된 todo만, false이면 미완료된 todo만 조회합니다. 아무것도 입력하지 않으면 모든 todo를 조회합니다.',
+        description="done이 true이면 완료된 todo만, false이면 미완료된 todo만 조회합니다. 아무것도 입력하지 않으면 모든 todo를 조회합니다.",
     )
     cursor: Optional[float] = None
     size: Optional[float] = 20
@@ -129,14 +129,14 @@ class FindTodosQueryDto(BaseModel):
 
 class GetProgressQueryDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     goalId: Optional[float] = None
 
 
 class CreateTodoBodyDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     title: str
     fileUrl: Optional[str] = None
@@ -146,7 +146,7 @@ class CreateTodoBodyDto(BaseModel):
 
 class UpdateTodoBodyDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     title: Optional[str] = None
     fileUrl: Optional[str] = None
@@ -157,7 +157,7 @@ class UpdateTodoBodyDto(BaseModel):
 
 class UserCreateRequstDto(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     email: str
     name: str

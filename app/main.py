@@ -37,26 +37,26 @@ from .models import (
 )
 
 app = FastAPI(
-    title='server',
-    version='1.0.0',
-    description='codeit-slidtodo',
+    title="server",
+    version="1.0.0",
+    description="codeit-slidtodo",
     contact={},
-    servers=[{'url': '/'}],
+    servers=[{"url": "/"}],
 )
 
 
 @app.post(
-    '/{teamId}/auth/login',
+    "/{teamId}/auth/login",
     response_model=None,
     responses={
-        '201': {'model': FieldTeamIdAuthLoginPostResponse},
-        '400': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "201": {"model": FieldTeamIdAuthLoginPostResponse},
+        "400": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Auth'],
+    tags=["Auth"],
 )
 def login(
-    team_id: str = Path(..., alias='teamId'), body: LoginBodyDto = ...
+    team_id: str = Path(..., alias="teamId"), body: LoginBodyDto = ...
 ) -> Optional[Union[FieldTeamIdAuthLoginPostResponse, ErrorResponsePayload]]:
     """
     로그인
@@ -65,16 +65,16 @@ def login(
 
 
 @app.post(
-    '/{teamId}/auth/tokens',
+    "/{teamId}/auth/tokens",
     response_model=None,
     responses={
-        '201': {'model': FieldTeamIdAuthTokensPostResponse},
-        '401': {'model': ErrorResponsePayload},
+        "201": {"model": FieldTeamIdAuthTokensPostResponse},
+        "401": {"model": ErrorResponsePayload},
     },
-    tags=['Auth'],
+    tags=["Auth"],
 )
 def refresh(
-    team_id: str = Path(..., alias='teamId')
+    team_id: str = Path(..., alias="teamId"),
 ) -> Optional[Union[FieldTeamIdAuthTokensPostResponse, ErrorResponsePayload]]:
     """
     토큰 재발급
@@ -83,16 +83,16 @@ def refresh(
 
 
 @app.post(
-    '/{teamId}/files',
+    "/{teamId}/files",
     response_model=FieldTeamIdFilesPostResponse,
     responses={
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
     },
-    tags=['File'],
+    tags=["File"],
 )
 def upload_file(
-    team_id: str = Path(..., alias='teamId'), file: UploadFile = ...
+    team_id: str = Path(..., alias="teamId"), file: UploadFile = ...
 ) -> Union[FieldTeamIdFilesPostResponse, ErrorResponsePayload]:
     """
     파일 업로드
@@ -101,16 +101,16 @@ def upload_file(
 
 
 @app.get(
-    '/{teamId}/goals',
+    "/{teamId}/goals",
     response_model=FieldTeamIdGoalsGetResponse,
-    responses={'401': {'model': ErrorResponsePayload}},
-    tags=['Goal'],
+    responses={"401": {"model": ErrorResponsePayload}},
+    tags=["Goal"],
 )
 def find(
-    team_id: str = Path(..., alias='teamId'),
+    team_id: str = Path(..., alias="teamId"),
     cursor: Optional[float] = None,
     size: Optional[float] = 20,
-    sort_order: Optional[SortOrder3] = Query('oldest', alias='sortOrder'),
+    # sort_order: Optional[SortOrder3] = Query('oldest', alias='sortOrder'),
 ) -> Union[FieldTeamIdGoalsGetResponse, ErrorResponsePayload]:
     """
     내 목표 리스트 조회
@@ -119,16 +119,16 @@ def find(
 
 
 @app.post(
-    '/{teamId}/goals',
+    "/{teamId}/goals",
     response_model=None,
     responses={
-        '201': {'model': FieldTeamIdGoalsPostResponse},
-        '401': {'model': ErrorResponsePayload},
+        "201": {"model": FieldTeamIdGoalsPostResponse},
+        "401": {"model": ErrorResponsePayload},
     },
-    tags=['Goal'],
+    tags=["Goal"],
 )
 def create(
-    team_id: str = Path(..., alias='teamId'), body: CreateGoalBodyDto = ...
+    team_id: str = Path(..., alias="teamId"), body: CreateGoalBodyDto = ...
 ) -> Optional[Union[FieldTeamIdGoalsPostResponse, ErrorResponsePayload]]:
     """
     내 목표 생성
@@ -137,16 +137,16 @@ def create(
 
 
 @app.get(
-    '/{teamId}/goals/{goalId}',
+    "/{teamId}/goals/{goalId}",
     response_model=FieldTeamIdGoalsGoalIdGetResponse,
     responses={
-        '401': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Goal'],
+    tags=["Goal"],
 )
 def get(
-    team_id: str = Path(..., alias='teamId'), goal_id: float = Path(..., alias='goalId')
+    team_id: str = Path(..., alias="teamId"), goal_id: float = Path(..., alias="goalId")
 ) -> Union[FieldTeamIdGoalsGoalIdGetResponse, ErrorResponsePayload]:
     """
     내 목표 조회
@@ -155,18 +155,18 @@ def get(
 
 
 @app.patch(
-    '/{teamId}/goals/{goalId}',
+    "/{teamId}/goals/{goalId}",
     response_model=FieldTeamIdGoalsGoalIdPatchResponse,
     responses={
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Goal'],
+    tags=["Goal"],
 )
 def update(
-    team_id: str = Path(..., alias='teamId'),
-    goal_id: float = Path(..., alias='goalId'),
+    team_id: str = Path(..., alias="teamId"),
+    goal_id: float = Path(..., alias="goalId"),
     body: UpdateGoalBodyDto = ...,
 ) -> Union[FieldTeamIdGoalsGoalIdPatchResponse, ErrorResponsePayload]:
     """
@@ -176,17 +176,17 @@ def update(
 
 
 @app.delete(
-    '/{teamId}/goals/{goalId}',
+    "/{teamId}/goals/{goalId}",
     response_model=None,
     responses={
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Goal'],
+    tags=["Goal"],
 )
 def delete(
-    team_id: str = Path(..., alias='teamId'), goal_id: float = Path(..., alias='goalId')
+    team_id: str = Path(..., alias="teamId"), goal_id: float = Path(..., alias="goalId")
 ) -> Optional[ErrorResponsePayload]:
     """
     내 목표 삭제
@@ -195,17 +195,17 @@ def delete(
 
 
 @app.get(
-    '/{teamId}/notes',
+    "/{teamId}/notes",
     response_model=FieldTeamIdNotesGetResponse,
     responses={
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
     },
-    tags=['Note'],
+    tags=["Note"],
 )
 def find(
-    team_id: str = Path(..., alias='teamId'),
-    goal_id: Optional[float] = Query(None, alias='goalId'),
+    team_id: str = Path(..., alias="teamId"),
+    goal_id: Optional[float] = Query(None, alias="goalId"),
     cursor: Optional[float] = None,
     size: Optional[float] = 20,
 ) -> Union[FieldTeamIdNotesGetResponse, ErrorResponsePayload]:
@@ -216,19 +216,19 @@ def find(
 
 
 @app.post(
-    '/{teamId}/notes',
+    "/{teamId}/notes",
     response_model=None,
     responses={
-        '201': {'model': FieldTeamIdNotesPostResponse},
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '409': {'model': ErrorResponsePayload},
+        "201": {"model": FieldTeamIdNotesPostResponse},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "409": {"model": ErrorResponsePayload},
     },
-    tags=['Note'],
+    tags=["Note"],
 )
 def post(
-    team_id: str = Path(..., alias='teamId'), body: CreateNoteBodyDto = ...
+    team_id: str = Path(..., alias="teamId"), body: CreateNoteBodyDto = ...
 ) -> Optional[Union[FieldTeamIdNotesPostResponse, ErrorResponsePayload]]:
     """
     노트 생성
@@ -237,18 +237,18 @@ def post(
 
 
 @app.get(
-    '/{teamId}/notes/{noteId}',
+    "/{teamId}/notes/{noteId}",
     response_model=FieldTeamIdNotesNoteIdGetResponse,
     responses={
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Note'],
+    tags=["Note"],
 )
 def get(
-    team_id: str = Path(..., alias='teamId'), note_id: float = Path(..., alias='noteId')
+    team_id: str = Path(..., alias="teamId"), note_id: float = Path(..., alias="noteId")
 ) -> Union[FieldTeamIdNotesNoteIdGetResponse, ErrorResponsePayload]:
     """
     단일 노트 조회
@@ -257,19 +257,19 @@ def get(
 
 
 @app.patch(
-    '/{teamId}/notes/{noteId}',
+    "/{teamId}/notes/{noteId}",
     response_model=FieldTeamIdNotesNoteIdPatchResponse,
     responses={
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Note'],
+    tags=["Note"],
 )
 def patch(
-    team_id: str = Path(..., alias='teamId'),
-    note_id: float = Path(..., alias='noteId'),
+    team_id: str = Path(..., alias="teamId"),
+    note_id: float = Path(..., alias="noteId"),
     body: UpdateNoteBodyDto = ...,
 ) -> Union[FieldTeamIdNotesNoteIdPatchResponse, ErrorResponsePayload]:
     """
@@ -279,17 +279,17 @@ def patch(
 
 
 @app.delete(
-    '/{teamId}/notes/{noteId}',
+    "/{teamId}/notes/{noteId}",
     response_model=None,
     responses={
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Note'],
+    tags=["Note"],
 )
 def delete(
-    team_id: str = Path(..., alias='teamId'), note_id: float = Path(..., alias='noteId')
+    team_id: str = Path(..., alias="teamId"), note_id: float = Path(..., alias="noteId")
 ) -> Optional[ErrorResponsePayload]:
     """
     노트 삭제
@@ -298,17 +298,17 @@ def delete(
 
 
 @app.get(
-    '/{teamId}/todos',
+    "/{teamId}/todos",
     response_model=FieldTeamIdTodosGetResponse,
     responses={
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
     },
-    tags=['Todo'],
+    tags=["Todo"],
 )
 def find(
-    team_id: str = Path(..., alias='teamId'),
-    goal_id: Optional[float] = Query(None, alias='goalId'),
+    team_id: str = Path(..., alias="teamId"),
+    goal_id: Optional[float] = Query(None, alias="goalId"),
     done: Optional[bool] = None,
     cursor: Optional[float] = None,
     size: Optional[float] = 20,
@@ -320,17 +320,17 @@ def find(
 
 
 @app.post(
-    '/{teamId}/todos',
+    "/{teamId}/todos",
     response_model=None,
     responses={
-        '201': {'model': TodoResponseDto},
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
+        "201": {"model": TodoResponseDto},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
     },
-    tags=['Todo'],
+    tags=["Todo"],
 )
 def create(
-    team_id: str = Path(..., alias='teamId'), body: CreateTodoBodyDto = ...
+    team_id: str = Path(..., alias="teamId"), body: CreateTodoBodyDto = ...
 ) -> Optional[Union[TodoResponseDto, ErrorResponsePayload]]:
     """
     할 일 생성
@@ -339,17 +339,17 @@ def create(
 
 
 @app.get(
-    '/{teamId}/todos/progress',
+    "/{teamId}/todos/progress",
     response_model=FieldTeamIdTodosProgressGetResponse,
     responses={
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
     },
-    tags=['Todo'],
+    tags=["Todo"],
 )
 def get_progress(
-    team_id: str = Path(..., alias='teamId'),
-    goal_id: Optional[float] = Query(None, alias='goalId'),
+    team_id: str = Path(..., alias="teamId"),
+    goal_id: Optional[float] = Query(None, alias="goalId"),
 ) -> Union[FieldTeamIdTodosProgressGetResponse, ErrorResponsePayload]:
     """
     할 일 진행률 조회
@@ -358,17 +358,17 @@ def get_progress(
 
 
 @app.get(
-    '/{teamId}/todos/{todoId}',
+    "/{teamId}/todos/{todoId}",
     response_model=TodoResponseDto,
     responses={
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Todo'],
+    tags=["Todo"],
 )
 def get_by_id(
-    team_id: str = Path(..., alias='teamId'), todo_id: float = Path(..., alias='todoId')
+    team_id: str = Path(..., alias="teamId"), todo_id: float = Path(..., alias="todoId")
 ) -> Union[TodoResponseDto, ErrorResponsePayload]:
     """
     단일 할 일 조회
@@ -377,19 +377,19 @@ def get_by_id(
 
 
 @app.patch(
-    '/{teamId}/todos/{todoId}',
+    "/{teamId}/todos/{todoId}",
     response_model=TodoResponseDto,
     responses={
-        '400': {'model': ErrorResponsePayload},
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "400": {"model": ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Todo'],
+    tags=["Todo"],
 )
 def update(
-    team_id: str = Path(..., alias='teamId'),
-    todo_id: float = Path(..., alias='todoId'),
+    team_id: str = Path(..., alias="teamId"),
+    todo_id: float = Path(..., alias="todoId"),
     body: UpdateTodoBodyDto = ...,
 ) -> Union[TodoResponseDto, ErrorResponsePayload]:
     """
@@ -399,17 +399,17 @@ def update(
 
 
 @app.delete(
-    '/{teamId}/todos/{todoId}',
+    "/{teamId}/todos/{todoId}",
     response_model=None,
     responses={
-        '401': {'model': ErrorResponsePayload},
-        '403': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "403": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['Todo'],
+    tags=["Todo"],
 )
 def delete(
-    team_id: str = Path(..., alias='teamId'), todo_id: float = Path(..., alias='todoId')
+    team_id: str = Path(..., alias="teamId"), todo_id: float = Path(..., alias="todoId")
 ) -> Optional[ErrorResponsePayload]:
     """
     할 일 삭제
@@ -418,17 +418,15 @@ def delete(
 
 
 @app.get(
-    '/{teamId}/user',
+    "/{teamId}/user",
     response_model=UserServiceResponseDto,
     responses={
-        '401': {'model': ErrorResponsePayload},
-        '404': {'model': ErrorResponsePayload},
+        "401": {"model": ErrorResponsePayload},
+        "404": {"model": ErrorResponsePayload},
     },
-    tags=['User'],
+    tags=["User"],
 )
-def get(
-    team_id: str = Path(..., alias='teamId')
-) -> Union[UserServiceResponseDto, ErrorResponsePayload]:
+def get(team_id: str = Path(..., alias="teamId")) -> Union[UserServiceResponseDto, ErrorResponsePayload]:
     """
     회원정보 조회
     """
@@ -436,17 +434,17 @@ def get(
 
 
 @app.post(
-    '/{teamId}/user',
+    "/{teamId}/user",
     response_model=None,
     responses={
-        '201': {'model': UserServiceResponseDto},
-        '400': {'model': ErrorResponsePayload},
-        '409': {'model': ErrorResponsePayload},
+        "201": {"model": UserServiceResponseDto},
+        "400": {"model": ErrorResponsePayload},
+        "409": {"model": ErrorResponsePayload},
     },
-    tags=['User'],
+    tags=["User"],
 )
 def create(
-    team_id: str = Path(..., alias='teamId'), body: UserCreateRequstDto = ...
+    team_id: str = Path(..., alias="teamId"), body: UserCreateRequstDto = ...
 ) -> Optional[Union[UserServiceResponseDto, ErrorResponsePayload]]:
     """
     회원가입
