@@ -1,0 +1,10 @@
+httpx
+fastapi[all]
+python-dateutil
+xxhash
+pydantic-settings
+pydantic
+colorlog
+cryptography
+pyjwt
+jwcrypto

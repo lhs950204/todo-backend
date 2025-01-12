@@ -1,0 +1,6 @@
+pytest-freezegun
+ipython
+pytest-asyncio
+pytest-env
+ruff
+pytest-cov

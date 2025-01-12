@@ -1,0 +1,49 @@
+{
+  "editor.semanticTokenColorCustomizations": {
+    "[Default Dark+]": {
+      "rules": {
+        "selfParameter": "#569CD6",
+        "clsParameter": "#569CD6"
+      }
+    }
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/__pycache__/**": true,
+    "**/.ruff_cache/**": true
+  },
+  "editor.fontSize": 13,
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "prettier.semi": true,
+  "prettier.arrowParens": "always",
+  "prettier.trailingComma": "all",
+  "prettier.tabWidth": 2,
+  "prettier.printWidth": 120,
+  "prettier.bracketSameLine": false,
+  "python.analysis.typeCheckingMode": "basic",
+  "editor.rulers": [120],
+  "editor.renderWhitespace": "all",
+  "window.zoomLevel": 0.5,
+  "editor.minimap.renderCharacters": false,
+  "editor.formatOnSave": true
+}
