@@ -18,4 +18,4 @@ async def register_user(user_in: UserRegisterSchema):
 
 @router.get("", response_model=User, response_model_exclude={"hashed_password"})
 async def get_user(user: UserDepends):
-    raise
+    return user
