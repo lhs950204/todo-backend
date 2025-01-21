@@ -37,7 +37,6 @@ def default_user(session: Session):
     session.add(user)
     session.commit()
     session.refresh(user)
-    # assert user.id is not None
 
     return user
 
