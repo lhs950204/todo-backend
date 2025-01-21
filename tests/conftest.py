@@ -10,6 +10,9 @@ from app.core.security import get_password_hash
 from app.depends.db import SessionDep
 from app.main import app
 from app.models.user import User
+from app.models.note import Note
+from app.models.goal import Goal
+from app.models.todo import Todo
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -54,3 +57,43 @@ def login_user(client: TestClient, default_user: User):
         json={"email": "test@example.com", "password": "test"},
     )
     return response.json()
+
+
+@pytest.fixture()
+def default_goal(session: Session, default_user: User):
+    goal = Goal(title="테스트 목표", user_id=default_user.id)
+    session.add(goal)
+    session.commit()
+    session.refresh(goal)
+    return goal
+
+
+@pytest.fixture()
+def default_todo(session: Session, default_goal: Goal):
+    todo = Todo(
+        title="테스트 할일",
+        link_url="https://example.com",
+        file_url="https://example.com/file",
+        goal_id=default_goal.id,
+        user_id=default_goal.user_id,
+    )
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+    return todo
+
+
+@pytest.fixture()
+def default_note(session: Session, default_user: User, default_goal: Goal, default_todo: Todo):
+    note = Note(
+        title="테스트 노트",
+        content="테스트 노트 내용",
+        link_url="https://example.com",
+        user_id=default_user.id,
+        goal_id=default_goal.id,
+        todo_id=default_todo.id,
+    )
+    session.add(note)
+    session.commit()
+    session.refresh(note)
+    return note
