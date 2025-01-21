@@ -12,5 +12,5 @@ if TYPE_CHECKING:
 class Goal(ModelBase, table=True):
     title: str
 
-    user_id: UUID = Field(foreign_key="user.id")
+    user_id: int = Field(foreign_key="user.id")
     user: "User" = Relationship(back_populates="goals")

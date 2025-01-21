@@ -39,7 +39,7 @@ async def refresh_token(session: SessionDep, token: str = Depends(get_token_from
         raise HTTPException(status_code=401, detail="Invalid token type")
 
     # 사용자 확인
-    user = session.exec(select(User).where(User.id == UUID(payload["sub"]))).one_or_none()
+    user = session.exec(select(User).where(User.id == int(payload["sub"]))).one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
