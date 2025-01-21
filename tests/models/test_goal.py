@@ -1,7 +1,6 @@
 from sqlmodel import Session, select
-from datetime import datetime, timedelta
 
-from app.models.goals import Goal
+from app.models.goal import Goal
 from app.models.user import User
 
 

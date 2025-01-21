@@ -2,7 +2,7 @@ from pydantic import EmailStr
 from sqlmodel import Field, Relationship
 
 from app.models.base import ModelBase
-from app.models.goals import Goal
+from app.models.goal import Goal
 
 
 class User(ModelBase, table=True):
