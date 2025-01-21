@@ -10,7 +10,12 @@ from app.schema.user import UserRegisterSchema
 router = APIRouter(prefix="/user")
 
 
-@router.post("", response_model=User, response_model_exclude={"hashed_password"})
+@router.post(
+    "",
+    name="회원 가입",
+    response_model=User,
+    response_model_exclude={"hashed_password"},
+)
 async def register_user(user_in: UserRegisterSchema, session: SessionDep):
     user = (await session.exec(select(User).where(User.email == user_in.email))).first()
     if user:
@@ -23,6 +28,11 @@ async def register_user(user_in: UserRegisterSchema, session: SessionDep):
     return user
 
 
-@router.get("", response_model=User, response_model_exclude={"hashed_password"})
+@router.get(
+    "",
+    name="회원정보 조회",
+    response_model=User,
+    response_model_exclude={"hashed_password"},
+)
 async def get_user(user: UserDepends):
     return user

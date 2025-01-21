@@ -16,7 +16,7 @@ from app.models.user import User
 router = APIRouter(prefix="/auth")
 
 
-@router.post("/login")
+@router.post("/login", name="로그인")
 async def login(session: SessionDep, email: str = Body(...), password: str = Body(...)):
     user = (await session.exec(select(User).where(User.email == email))).one_or_none()
     if not user or not verify_password(password, user.hashed_password):
@@ -29,7 +29,7 @@ async def login(session: SessionDep, email: str = Body(...), password: str = Bod
     }
 
 
-@router.post("/tokens")
+@router.post("/tokens", name="토큰 재발급")
 async def refresh_token(session: SessionDep, token: str = Depends(get_token_from_header)):
     # 토큰 검증
     payload = verify_token(token)
