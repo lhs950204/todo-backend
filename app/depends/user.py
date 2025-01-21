@@ -10,6 +10,11 @@ from app.depends.token import get_token_from_header
 from app.models.user import User
 
 
+def get_user_id(token: str = Depends(get_token_from_header)) -> UUID:
+    payload = verify_token(token)
+    return UUID(payload["sub"])
+
+
 def get_user(session: SessionDep, token: str = Depends(get_token_from_header)) -> User:
     payload = verify_token(token)
     user = session.exec(select(User).where(User.id == UUID(payload["sub"]))).one_or_none()
@@ -19,3 +24,4 @@ def get_user(session: SessionDep, token: str = Depends(get_token_from_header)) -
 
 
 UserDepends = Annotated[User, Depends(get_user)]
+UserIDDepends = Annotated[UUID, Depends(get_user_id)]
