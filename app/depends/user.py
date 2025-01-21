@@ -10,9 +10,9 @@ from app.depends.token import get_token_from_header
 from app.models.user import User
 
 
-async def get_user(session: SessionDep, token: str = Depends(get_token_from_header)) -> User:
+def get_user(session: SessionDep, token: str = Depends(get_token_from_header)) -> User:
     payload = verify_token(token)
-    user = (await session.exec(select(User).where(User.id == UUID(payload["sub"])))).one_or_none()
+    user = session.exec(select(User).where(User.id == UUID(payload["sub"]))).one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

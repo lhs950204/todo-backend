@@ -1,47 +1,44 @@
-from collections.abc import Generator
-from typing import AsyncGenerator
+from typing import Generator
 
 import pytest
 from fastapi.testclient import TestClient
 from app.core.db import engine
-from sqlmodel import SQLModel, delete
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import SQLModel, Session, select
+import sqlalchemy as sa
 
 from app.core.security import get_password_hash
-from app.core.settings import settings
 from app.depends.db import SessionDep
 from app.main import app
 from app.models.user import User
 
 
-@pytest.fixture(scope="session", autouse=True)
-async def reset_db():
-    async with engine.begin() as conn:
-        # await conn.run_sync(SQLModel.metadata.drop_all)
-        await conn.run_sync(SQLModel.metadata.create_all)
+@pytest.fixture(scope="function", autouse=True)
+def reset_db():
+    SQLModel.metadata.drop_all(engine)
+    SQLModel.metadata.create_all(engine)
 
 
-@pytest.fixture(scope="session", autouse=True)
-async def db() -> AsyncGenerator[AsyncSession, None]:
-    async with AsyncSession(bind=engine) as session:
-        try:
-            yield session
-        finally:
-            await session.rollback()
+@pytest.fixture()
+def session():
+    with Session(bind=engine) as session:
+        yield session
 
 
-app.dependency_overrides[SessionDep] = db
+app.dependency_overrides[SessionDep] = session
 
 
-@pytest.fixture(scope="session")
-async def default_user(db: AsyncSession):
+@pytest.fixture(scope="function")
+def default_user(session: Session):
     user = User(
         email="test@example.com",
         hashed_password=get_password_hash("test"),
         name="test",
     )
-    db.add(user)
-    await db.commit()
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    # assert user.id is not None
+
     return user
 
 
@@ -52,7 +49,7 @@ def client() -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture()
-async def login_user(client: TestClient):
+def login_user(client: TestClient, default_user: User):
     response = client.post(
         "/auth/login",
         json={"email": "test@example.com", "password": "test"},

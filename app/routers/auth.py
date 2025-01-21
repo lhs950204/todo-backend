@@ -18,7 +18,7 @@ router = APIRouter(prefix="/auth")
 
 @router.post("/login", name="로그인")
 async def login(session: SessionDep, email: str = Body(...), password: str = Body(...)):
-    user = (await session.exec(select(User).where(User.email == email))).one_or_none()
+    user = session.exec(select(User).where(User.email == email)).one_or_none()
     if not user or not verify_password(password, user.hashed_password):
         raise HTTPException(status_code=401, detail="이메일 또는 비밀번호가 잘못되었습니다")
 
@@ -39,7 +39,7 @@ async def refresh_token(session: SessionDep, token: str = Depends(get_token_from
         raise HTTPException(status_code=401, detail="Invalid token type")
 
     # 사용자 확인
-    user = (await session.exec(select(User).where(User.id == UUID(payload["sub"])))).one_or_none()
+    user = session.exec(select(User).where(User.id == UUID(payload["sub"]))).one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

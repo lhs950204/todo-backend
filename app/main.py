@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
-from typing import Optional, Union
 
-from fastapi import FastAPI, Path, Query, UploadFile
+from fastapi import FastAPI
 
 from .routers import auth, user
 
@@ -13,9 +12,7 @@ async def lifespan(app: FastAPI):
 
     from app.core.db import engine
 
-    async with engine.begin() as conn:
-        # await conn.run_sync(SQLModel.metadata.drop_all)
-        await conn.run_sync(SQLModel.metadata.create_all)
+    SQLModel.metadata.create_all(engine)
     yield
 
 
