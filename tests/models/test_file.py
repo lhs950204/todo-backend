@@ -60,7 +60,7 @@ class TestFile:
         assert file_obj.user_id == test_user.id
 
         # 파일 저장 검증
-        saved_path = Path(file_obj.get_full_path())
+        saved_path = Path(file_obj.get_save_path())
         assert saved_path.exists()
         assert saved_path.read_bytes() == b"test content"
 

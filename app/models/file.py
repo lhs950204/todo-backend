@@ -6,14 +6,11 @@ from typing import TYPE_CHECKING
 from fastapi import UploadFile
 from sqlmodel import Field, Relationship
 
+from app.core.settings import settings
 from app.models.base import ModelBase
 
 if TYPE_CHECKING:
     from app.models.user import User
-
-# 프로젝트 루트 디렉토리의 상위에 media 폴더 생성
-MEDIA_ROOT = Path(__file__).parent.parent.parent.parent / "media"
-MEDIA_ROOT.mkdir(exist_ok=True)
 
 
 class File(ModelBase, table=True):
@@ -26,11 +23,14 @@ class File(ModelBase, table=True):
     user_id: int = Field(foreign_key="user.id", nullable=False)
     user: "User" = Relationship(back_populates="files", sa_relationship_kwargs={"lazy": "selectin"})
 
-    def get_full_path(self) -> str:
+    def get_save_path(self) -> str:
         """
         파일의 전체 경로를 반환합니다.
         """
-        return self.file_path
+        return os.path.join(settings.MEDIA_ROOT, self.file_path)
+
+    def get_media_url(self) -> str:
+        return os.path.join(settings.MEDIA_URL, self.file_path)
 
     @classmethod
     async def create_from_upload(cls, upload_file: UploadFile, user_id: int) -> "File":
@@ -45,8 +45,7 @@ class File(ModelBase, table=True):
             raise ValueError("파일 이름이 없습니다.")
 
         # 파일명 생성 (날짜_랜덤문자열.확장자)
-        ext = os.path.splitext(upload_file.filename)[1]
-        filename = f"{upload_file.filename}.{ext}"
+        filename = f"{upload_file.filename}"
 
         # 저장 경로 생성 (user_id/filename)
         relative_path = f"{user_id}/{filename}"
@@ -69,7 +68,7 @@ class File(ModelBase, table=True):
         """
         파일을 media 폴더에 저장합니다.
         """
-        full_path = Path(self.get_full_path())
+        full_path = Path(self.get_save_path())
         full_path.parent.mkdir(parents=True, exist_ok=True)
 
         full_path.write_bytes(content)
@@ -79,7 +78,7 @@ class File(ModelBase, table=True):
         media 폴더에서 파일을 삭제합니다.
         """
         try:
-            full_path = Path(self.get_full_path())
+            full_path = Path(self.get_save_path())
             if full_path.exists():
                 full_path.unlink()
 

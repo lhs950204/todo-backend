@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     DB_URI: str = ""
 
+    MEDIA_URL: str = "media"
+    MEDIA_ROOT: str = "../media"
+
 
 settings = Settings()
 

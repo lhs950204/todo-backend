@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.models.file import MEDIA_ROOT
+from app.core.settings import settings
 
 from .routers import auth, file, goal, note, todo, user
 
@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.mount("/media", StaticFiles(directory=MEDIA_ROOT), name="media")
+app.mount("/media", StaticFiles(directory=settings.MEDIA_ROOT), name="media")
 
 app.include_router(auth.router)
 app.include_router(user.router)
