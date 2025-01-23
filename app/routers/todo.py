@@ -6,7 +6,7 @@ from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
 from app.models.goal import Goal
 from app.models.todo import Todo
-from app.schema.todo import TodoCreate, TodoList, TodoProgress, TodoUpdate
+from app.schema.todo import TodoCreate, TodoList, TodoUpdate
 
 router = APIRouter(prefix="/todos", tags=["Todo"])
 
