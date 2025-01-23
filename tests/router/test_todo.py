@@ -116,9 +116,7 @@ async def test_get_todo_progress(
         headers={"Authorization": f"Bearer {login_user['access_token']}"},
     )
     assert response.status_code == 200
-    assert response.json()["total"] == 5
-    assert response.json()["completed"] == 2
-    assert response.json()["completion_rate"] == 40.0
+    assert response.json()["progress"] == 0.4
 
 
 async def test_get_todo(client: TestClient, login_user, default_todo: Todo):

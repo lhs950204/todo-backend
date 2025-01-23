@@ -78,7 +78,7 @@ async def create_todo(
     return new_todo
 
 
-@router.get("/progress", name="할 일 진행 상황 조회", response_model=TodoProgress)
+@router.get("/progress", name="할 일 진행 상황 조회")
 async def get_todo_progress(session: SessionDep, user_id: UserIDDepends, goal_id: int = Query(..., alias="goalId")):
     # 전체 할 일 수
     total = session.scalar(
@@ -94,14 +94,7 @@ async def get_todo_progress(session: SessionDep, user_id: UserIDDepends, goal_id
     )
     assert completed is not None
 
-    # 완료율 계산
-    completion_rate = (completed / total * 100) if total > 0 else 0.0
-
-    return TodoProgress(
-        total=total,
-        completed=completed,
-        completion_rate=completion_rate,
-    )
+    return {"progress": completed / total}
 
 
 @router.get("/{todo_id}", name="할 일 상세 조회", response_model=Todo)
