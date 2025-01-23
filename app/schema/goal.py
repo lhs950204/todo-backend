@@ -3,6 +3,7 @@ from typing import Sequence
 from pydantic import BaseModel
 
 from app.models.goal import Goal
+from app.schema.common import CursorPaginationBase
 
 
 class GoalCreate(BaseModel):
@@ -13,7 +14,5 @@ class GoalUpdate(GoalCreate):
     title: str
 
 
-class GoalList(BaseModel):
-    next_cursor: int | None
-    total_count: int
+class GoalList(CursorPaginationBase):
     goals: Sequence[Goal]
