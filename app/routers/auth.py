@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlmodel import select
 

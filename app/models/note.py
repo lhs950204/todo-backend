@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING
-
 from sqlmodel import Field, Relationship
 
 from app.models.base import ModelBase
