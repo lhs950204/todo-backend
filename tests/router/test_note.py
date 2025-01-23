@@ -143,3 +143,28 @@ async def test_delete_note_not_found(client: TestClient, login_user):
         headers={"Authorization": f"Bearer {login_user['access_token']}"},
     )
     assert response.status_code == 404
+
+
+async def test_create_note_with_invalid_goal(client: TestClient, login_user, session: Session, default_todo: Todo):
+    # 다른 사용자의 goal 생성
+    other_user = User(email="other@example.com", name="other", hashed_password="test")
+    session.add(other_user)
+    session.commit()
+
+    other_goal = Goal(title="다른 사용자의 목표", user_id=other_user.id)
+    session.add(other_goal)
+    session.commit()
+
+    response = client.post(
+        "/notes",
+        headers={"Authorization": f"Bearer {login_user['access_token']}"},
+        json={
+            "title": "새로운 노트",
+            "content": "노트 내용",
+            "link_url": "https://example.com",
+            "goal_id": other_goal.id,
+            "todo_id": default_todo.id,
+        },
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Goal not found"

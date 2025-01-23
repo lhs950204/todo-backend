@@ -4,6 +4,7 @@ from sqlmodel import delete, desc, select
 
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
+from app.models.goal import Goal
 from app.models.note import Note
 from app.schema.note import NoteCreate, NoteList, NoteUpdate
 
@@ -47,6 +48,11 @@ async def get_notes(
 
 @router.post("/", name="노트 생성", response_model=Note)
 async def create_note(session: SessionDep, user_id: UserIDDepends, note: NoteCreate):
+    # goal이 현재 사용자의 것인지 확인
+    goal = session.exec(select(Goal).where(Goal.id == note.goal_id, Goal.user_id == user_id)).first()
+    if not goal:
+        raise HTTPException(status_code=404, detail="Goal not found")
+
     new_note = Note(
         title=note.title,
         content=note.content,
