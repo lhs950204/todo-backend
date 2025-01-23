@@ -18,6 +18,7 @@ class TodoUpdate(BaseModel):
     done: bool | None = None
     file_url: str | None = Field(None, alias="fileUrl")
     link_url: str | None = Field(None, alias="linkUrl")
+    goal_id: int | None = Field(None, alias="goalId")
 
 
 class TodoList(CursorPaginationBase):

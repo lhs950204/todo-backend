@@ -4,6 +4,7 @@ from sqlmodel import delete, desc, select
 
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
+from app.models.goal import Goal
 from app.models.todo import Todo
 from app.schema.todo import TodoCreate, TodoList, TodoProgress, TodoUpdate
 
@@ -59,6 +60,11 @@ async def create_todo(
     user_id: UserIDDepends,
     todo_create: TodoCreate,
 ):
+    # goal이 현재 사용자의 것인지 확인
+    goal = session.exec(select(Goal).where(Goal.id == todo_create.goal_id, Goal.user_id == user_id)).first()
+    if not goal:
+        raise HTTPException(status_code=404, detail="Goal not found")
+
     new_todo = Todo(
         title=todo_create.title,
         link_url=todo_create.link_url,
@@ -123,6 +129,12 @@ async def update_todo(
 
     if not todo:
         raise HTTPException(status_code=404, detail="Todo not found")
+
+    # goal_id가 변경되는 경우, 새로운 goal이 현재 사용자의 것인지 확인
+    if todo_update.goal_id is not None:
+        goal = session.exec(select(Goal).where(Goal.id == todo_update.goal_id, Goal.user_id == user_id)).first()
+        if not goal:
+            raise HTTPException(status_code=404, detail="Goal not found")
 
     todo_data = todo_update.model_dump(exclude_unset=True)
     for key, value in todo_data.items():

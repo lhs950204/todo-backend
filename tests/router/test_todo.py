@@ -172,3 +172,46 @@ async def test_delete_todo_not_found(client: TestClient, login_user):
         headers={"Authorization": f"Bearer {login_user['access_token']}"},
     )
     assert response.status_code == 404
+
+
+async def test_create_todo_with_invalid_goal(client: TestClient, login_user, session: Session):
+    # 다른 사용자의 goal 생성
+    other_user = User(email="other@example.com", name="other", hashed_password="test")
+    session.add(other_user)
+    session.commit()
+
+    other_goal = Goal(title="다른 사용자의 목표", user_id=other_user.id)
+    session.add(other_goal)
+    session.commit()
+
+    response = client.post(
+        "/todos",
+        headers={"Authorization": f"Bearer {login_user['access_token']}"},
+        json={
+            "title": "새로운 할일",
+            "linkUrl": "https://example.com",
+            "fileUrl": "https://example.com/file",
+            "goalId": other_goal.id,
+        },
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Goal not found"
+
+
+async def test_update_todo_with_invalid_goal(client: TestClient, login_user, default_todo: Todo, session: Session):
+    # 다른 사용자의 goal 생성
+    other_user = User(email="other@example.com", name="other", hashed_password="test")
+    session.add(other_user)
+    session.commit()
+
+    other_goal = Goal(title="다른 사용자의 목표", user_id=other_user.id)
+    session.add(other_goal)
+    session.commit()
+
+    response = client.patch(
+        f"/todos/{default_todo.id}",
+        headers={"Authorization": f"Bearer {login_user['access_token']}"},
+        json={"goalId": other_goal.id},
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Goal not found"
