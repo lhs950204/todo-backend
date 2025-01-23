@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func
-from sqlmodel import delete, desc, select
+from sqlmodel import case, delete, desc, select
 
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
@@ -80,19 +80,18 @@ async def create_todo(
 
 @router.get("/progress", name="할 일 진행 상황 조회")
 async def get_todo_progress(session: SessionDep, user_id: UserIDDepends, goal_id: int = Query(..., alias="goalId")):
-    # 전체 할 일 수
-    total = session.scalar(
-        select(func.count()).select_from(Todo).where(Todo.user_id == user_id, Todo.goal_id == goal_id)
-    )
-    assert total is not None
+    # Todo 테이블에서 total과 completed를 한 번의 쿼리로 조회
+    result = session.exec(
+        select(
+            func.count(Todo.id).label("total"), func.sum(case((Todo.done == True, 1), else_=0)).label("completed")
+        ).where(Todo.user_id == user_id, Todo.goal_id == goal_id)
+    ).first()
 
-    # 완료된 할 일 수
-    completed = session.scalar(
-        select(func.count())
-        .select_from(Todo)
-        .where(Todo.user_id == user_id, Todo.goal_id == goal_id, Todo.done == True)
-    )
-    assert completed is not None
+    total, completed = result
+
+    # total이 0일 경우 진행도를 계산할 수 없으므로 처리
+    if total == 0:
+        return {"progress": 0.0}
 
     return {"progress": completed / total}
 

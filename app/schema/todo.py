@@ -23,9 +23,3 @@ class TodoUpdate(BaseModel):
 
 class TodoList(CursorPaginationBase):
     todos: Sequence[Todo]
-
-
-class TodoProgress(BaseModel):
-    total: int
-    completed: int
-    completion_rate: float
