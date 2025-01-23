@@ -7,7 +7,7 @@ from app.depends.user import UserIDDepends
 from app.models.note import Note
 from app.schema.note import NoteCreate, NoteList, NoteUpdate
 
-router = APIRouter(prefix="/notes")
+router = APIRouter(prefix="/notes", tags=["Note"])
 
 
 @router.get("/", name="노트 리스트 조회", response_model=NoteList)

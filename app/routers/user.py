@@ -7,7 +7,7 @@ from app.depends.user import UserDepends
 from app.models.user import User
 from app.schema.user import UserRegisterSchema
 
-router = APIRouter(prefix="/user")
+router = APIRouter(prefix="/user", tags=["User"])
 
 
 @router.post(

@@ -11,7 +11,7 @@ from app.depends.db import SessionDep
 from app.depends.token import get_token_from_header
 from app.models.user import User
 
-router = APIRouter(prefix="/auth")
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/login", name="로그인")
