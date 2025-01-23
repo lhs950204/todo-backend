@@ -30,7 +30,7 @@ class File(ModelBase, table=True):
         """
         파일의 전체 경로를 반환합니다.
         """
-        return str(MEDIA_ROOT / self.file_path)
+        return self.file_path
 
     @classmethod
     async def create_from_upload(cls, upload_file: UploadFile, user_id: int) -> "File":
@@ -46,10 +46,10 @@ class File(ModelBase, table=True):
 
         # 파일명 생성 (날짜_랜덤문자열.확장자)
         ext = os.path.splitext(upload_file.filename)[1]
-        filename = f"{datetime.utcnow().strftime('%Y%m%d')}_{os.urandom(8).hex()}{ext}"
+        filename = f"{upload_file.filename}.{ext}"
 
         # 저장 경로 생성 (user_id/filename)
-        relative_path = f"user_{user_id}/{filename}"
+        relative_path = f"{user_id}/{filename}"
 
         # File 객체 생성
         file_obj = cls(
