@@ -1,1 +1,1 @@
-docker build -t lhs950204/todo -f docker/dockerfile .
+docker buildx build --platform=linux/amd64 -t lhs950204/todo -f docker/dockerfile .
