@@ -1,0 +1,1 @@
+docker build -t lhs950204/todo -f docker/dockerfile .

@@ -11,3 +11,4 @@ jwcrypto
 sqlmodel
 bcrypt
 greenlet
+passlib
