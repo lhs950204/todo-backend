@@ -11,7 +11,7 @@ from app.schema.note import NoteCreate, NoteList, NoteUpdate
 router = APIRouter(prefix="/notes", tags=["Note"])
 
 
-@router.get("/", name="노트 리스트 조회", response_model=NoteList)
+@router.get("", name="노트 리스트 조회", response_model=NoteList)
 async def get_notes(
     session: SessionDep,
     user_id: UserIDDepends,
@@ -46,7 +46,7 @@ async def get_notes(
     return NoteList(notes=notes, next_cursor=next_cursor, total_count=total_count)
 
 
-@router.post("/", name="노트 생성", response_model=Note)
+@router.post("", name="노트 생성", response_model=Note)
 async def create_note(session: SessionDep, user_id: UserIDDepends, note: NoteCreate):
     # goal이 현재 사용자의 것인지 확인
     goal = session.exec(select(Goal).where(Goal.id == note.goal_id, Goal.user_id == user_id)).first()

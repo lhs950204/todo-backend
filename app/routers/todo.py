@@ -11,7 +11,7 @@ from app.schema.todo import TodoCreate, TodoList, TodoUpdate
 router = APIRouter(prefix="/todos", tags=["Todo"])
 
 
-@router.get("/", name="할 일 리스트 조회", response_model=TodoList)
+@router.get("", name="할 일 리스트 조회", response_model=TodoList)
 async def get_todos(
     session: SessionDep,
     user_id: UserIDDepends,
@@ -54,7 +54,7 @@ async def get_todos(
     return TodoList(todos=todos, next_cursor=next_cursor, total_count=total_count)
 
 
-@router.post("/", name="할 일 생성", response_model=Todo)
+@router.post("", name="할 일 생성", response_model=Todo)
 async def create_todo(
     session: SessionDep,
     user_id: UserIDDepends,
