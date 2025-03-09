@@ -15,7 +15,7 @@ router = APIRouter(prefix="/todos", tags=["Todo"])
 async def get_todos(
     session: SessionDep,
     user_id: UserIDDepends,
-    goal_id: int = Query(..., alias="goalId"),
+    goal_id: int | None = Query(default=None, alias="goalId"),
     done: bool | None = Query(
         default=None,
         description="done이 true이면 완료된 todo만, false이면 미완료된 todo만 조회합니다. 아무것도 입력하지 않으면 모든 todo를 조회합니다.",
@@ -24,16 +24,17 @@ async def get_todos(
     size: int = Query(default=20, gt=0),
 ):
     # 기본 쿼리 생성
-    query = select(Todo).where(Todo.user_id == user_id, Todo.goal_id == goal_id)
+    query = select(Todo).where(Todo.user_id == user_id)
+
+    if goal_id is not None:
+        query = query.where(Todo.goal_id == goal_id)
 
     # done 필터 적용
     if done is not None:
         query = query.where(Todo.done == done)
 
     # 전체 할 일 수 조회
-    total_count = session.scalar(
-        select(func.count()).select_from(Todo).where(Todo.user_id == user_id, Todo.goal_id == goal_id)
-    )
+    total_count = session.scalar(select(func.count()).select_from(Todo).where(Todo.user_id == user_id))
     assert total_count is not None
 
     # 커서 기반 페이지네이션
