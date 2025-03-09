@@ -1,11 +1,12 @@
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func
-from sqlmodel import case, delete, desc, select
+from sqlmodel import asc, case, delete, desc, select
 
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
 from app.models.goal import Goal
 from app.models.todo import Todo
+from app.schema.common import SortOrder
 from app.schema.todo import TodoCreate, TodoList, TodoUpdate
 
 router = APIRouter(prefix="/todos", tags=["Todo"])
@@ -22,6 +23,7 @@ async def get_todos(
     ),
     cursor: int = Query(default=None, description="마지막으로 받은 할 일의 ID"),
     size: int = Query(default=20, gt=0),
+    sort_order: SortOrder = Query(default=SortOrder.DESC, alias="sortOrder"),
 ):
     # 기본 쿼리 생성
     query = select(Todo).where(Todo.user_id == user_id)
@@ -42,7 +44,10 @@ async def get_todos(
         query = query.where(Todo.id <= cursor)
 
     # 정렬 및 제한
-    query = query.order_by(desc(Todo.id)).limit(size + 1)
+    if sort_order == SortOrder.DESC:
+        query = query.order_by(desc(Todo.id)).limit(size + 1)
+    else:
+        query = query.order_by(asc(Todo.id)).limit(size + 1)
 
     todos = session.exec(query).all()
 
