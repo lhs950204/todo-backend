@@ -18,7 +18,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 async def login(session: SessionDep, email: str = Body(...), password: str = Body(...)):
     user = session.exec(select(User).where(User.email == email)).one_or_none()
     if not user or not verify_password(password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="이메일 또는 비밀번호가 잘못되었습니다")
+        raise HTTPException(status_code=500, detail="이메일 또는 비밀번호가 잘못되었습니다")
 
     return {
         **user.model_dump(exclude={"hashed_password"}),
@@ -34,7 +34,7 @@ async def refresh_token(session: SessionDep, token: str = Depends(get_token_from
 
     # refresh 토큰인지 확인
     if payload.get("type") != "refresh":
-        raise HTTPException(status_code=401, detail="Invalid token type")
+        raise HTTPException(status_code=500, detail="Invalid token type")
 
     # 사용자 확인
     user = session.exec(select(User).where(User.id == int(payload["sub"]))).one_or_none()
