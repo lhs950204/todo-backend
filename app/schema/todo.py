@@ -8,8 +8,8 @@ from app.schema.common import CursorPaginationBase
 
 class TodoCreate(BaseModel):
     title: str
-    file_url: str = Field(alias="fileUrl")
-    link_url: str = Field(alias="linkUrl")
+    file_url: str | None = Field(alias="fileUrl", default=None)
+    link_url: str | None = Field(alias="linkUrl", default=None)
     goal_id: int = Field(alias="goalId")
 
 
