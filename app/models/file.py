@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from fastapi import UploadFile
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -33,38 +32,6 @@ class File(ModelBase):
 
     def get_media_url(self) -> str:
         return os.path.join(settings.MEDIA_URL, self.file_path)
-
-    @classmethod
-    async def create_from_upload(cls, upload_file: UploadFile, user_id: int) -> "File":
-        """
-        UploadFile로부터 File 객체를 생성하고 파일을 저장합니다.
-        """
-        # 파일 정보 수집
-        content = await upload_file.read()
-        size = len(content)
-
-        if not upload_file.filename:
-            raise ValueError("파일 이름이 없습니다.")
-
-        # 파일명 생성 (날짜_랜덤문자열.확장자)
-        filename = f"{upload_file.filename}"
-
-        # 저장 경로 생성 (user_id/filename)
-        relative_path = f"{user_id}/{filename}"
-
-        # File 객체 생성
-        file_obj = cls(
-            filename=filename,
-            original_filename=upload_file.filename,
-            file_path=relative_path,
-            mime_type=upload_file.content_type or "application/octet-stream",
-            size=size,
-            user_id=user_id,
-        )
-
-        # 파일 저장
-        await file_obj.save_file(content)
-        return file_obj
 
     async def save_file(self, content: bytes) -> None:
         """
