@@ -8,8 +8,6 @@ from app.core.settings import settings
 
 from .routers import auth, file, goal, note, todo, user
 
-print("hello")
-
 
 # 임시코드임 나중에 alembic 으로 대체예정
 @asynccontextmanager
