@@ -22,4 +22,5 @@ class Todo(ModelBase, table=True):
     goal_id: int = Field(foreign_key="goal.id", nullable=False)
     goal: "Goal" = Relationship(back_populates="todos")
 
+    note_id: int = Field(foreign_key="note.id", nullable=True)
     note: "Note" = Relationship(back_populates="todo")
