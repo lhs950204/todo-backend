@@ -883,19 +883,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pytest-freezegun"
-version = "0.4.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "freezegun" },
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/f0/e3/c39d7c3d3afef5652f19323f3483267d7e6b0d9911c3867e10d6e2d3c9ae/pytest-freezegun-0.4.2.zip", hash = "sha256:19c82d5633751bf3ec92caa481fb5cffaac1787bd485f0df6436fd6242176949", size = 9059 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9e/09/0bdd7d24b9d21453ad3364ae1efbd65082045bb6081b5fd5eade91a9b644/pytest_freezegun-0.4.2-py2.py3-none-any.whl", hash = "sha256:5318a6bfb8ba4b709c8471c94d0033113877b3ee02da5bfcd917c1889cde99a7", size = 4590 },
-]
-
-[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -1109,11 +1096,11 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "aiosqlite" },
+    { name = "freezegun" },
     { name = "ipython" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
     { name = "pytest-env" },
-    { name = "pytest-freezegun" },
     { name = "ruff" },
 ]
 
@@ -1138,11 +1125,11 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "aiosqlite", specifier = ">=0.21.0" },
+    { name = "freezegun", specifier = ">=1.5.1" },
     { name = "ipython", specifier = ">=9.0.2" },
     { name = "pytest-asyncio", specifier = ">=0.26.0" },
     { name = "pytest-cov", specifier = ">=6.1.0" },
     { name = "pytest-env", specifier = ">=1.1.5" },
-    { name = "pytest-freezegun", specifier = ">=0.4.2" },
     { name = "ruff", specifier = ">=0.11.2" },
 ]
 

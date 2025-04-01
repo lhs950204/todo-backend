@@ -115,10 +115,10 @@ env = [
 [dependency-groups]
 dev = [
     "aiosqlite>=0.21.0",
+    "freezegun>=1.5.1",
     "ipython>=9.0.2",
     "pytest-asyncio>=0.26.0",
     "pytest-cov>=6.1.0",
     "pytest-env>=1.1.5",
-    "pytest-freezegun>=0.4.2",
     "ruff>=0.11.2",
 ]
