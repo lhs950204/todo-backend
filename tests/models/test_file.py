@@ -5,7 +5,8 @@ from unittest.mock import Mock
 
 from fastapi import UploadFile
 
-from app.models.file import File, MEDIA_ROOT
+from app.core.settings import settings
+from app.models.file import File
 from app.models.user import User
 
 
@@ -45,7 +46,7 @@ def temp_upload_file(tmp_path):
 class TestFile:
     def test_get_full_path(self, test_file):
         full_path = test_file.get_full_path()
-        expected_path = str(MEDIA_ROOT / f"user_{test_file.user_id}/test.txt")
+        expected_path = str(settings.MEDIA_ROOT / f"user_{test_file.user_id}/test.txt")
         assert full_path == expected_path
 
     @pytest.mark.asyncio
