@@ -1,14 +1,17 @@
 from typing import Annotated, Generator
 
 from fastapi import Depends
-from sqlmodel import Session
+from sqlalchemy.orm import Session
 
-from app.core.db import engine
+from app.core.db import SessionLocal
 
 
 def get_db() -> Generator[Session, None, None]:
-    with Session(bind=engine, expire_on_commit=False) as session:
-        yield session
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 SessionDep = Annotated[Session, Depends(get_db)]

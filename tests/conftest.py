@@ -2,13 +2,14 @@ from typing import Generator
 
 import pytest
 from fastapi.testclient import TestClient
-from app.core.db import engine
-from sqlmodel import SQLModel, Session, select
-import sqlalchemy as sa
-
+from app.core.db import engine, SessionLocal
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 from app.core.security import get_password_hash
 from app.depends.db import SessionDep
 from app.main import app
+
+from app.models.base import Base
 from app.models.user import User
 from app.models.note import Note
 from app.models.goal import Goal
@@ -17,13 +18,13 @@ from app.models.todo import Todo
 
 @pytest.fixture(scope="function", autouse=True)
 def reset_db():
-    SQLModel.metadata.drop_all(engine)
-    SQLModel.metadata.create_all(engine)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
 
 
 @pytest.fixture()
 def session():
-    with Session(bind=engine) as session:
+    with SessionLocal() as session:
         yield session
 
 

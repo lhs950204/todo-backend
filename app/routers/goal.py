@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
-from sqlalchemy import func
-from sqlmodel import asc, delete, desc, select
+from sqlalchemy import asc, delete, desc, func, select
 
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
@@ -40,7 +39,7 @@ async def get_goals(
     # 사이즈 제한
     query = query.limit(size + 1)  # 다음 페이지 존재 여부 확인을 위해 1개 더 가져옴
 
-    goals = session.exec(query).all()
+    goals = session.scalars(query).all()
 
     # 다음 페이지 커서 설정
     next_cursor = None
@@ -67,7 +66,7 @@ async def create_goal(session: SessionDep, user_id: UserIDDepends, goal: GoalCre
 
 @router.get("/{goal_id}", name="내 목표 조회", response_model=Goal)
 async def get_goal(session: SessionDep, user_id: UserIDDepends, goal_id: int):
-    goal = session.exec(select(Goal).where(Goal.id == goal_id, Goal.user_id == user_id)).first()
+    goal = session.scalar(select(Goal).where(Goal.id == goal_id, Goal.user_id == user_id))
 
     if not goal:
         raise HTTPException(status_code=404, detail="Goal not found")
@@ -77,7 +76,7 @@ async def get_goal(session: SessionDep, user_id: UserIDDepends, goal_id: int):
 
 @router.patch("/{goal_id}", name="내 목표 수정", response_model=Goal)
 async def update_goal(session: SessionDep, goal_id: int, user_id: UserIDDepends, goal: GoalUpdate):
-    db_goal = session.exec(select(Goal).where(Goal.id == goal_id, Goal.user_id == user_id)).first()
+    db_goal = session.scalar(select(Goal).where(Goal.id == goal_id, Goal.user_id == user_id))
 
     if not db_goal:
         raise HTTPException(status_code=404, detail="Goal not found")
@@ -96,7 +95,7 @@ async def update_goal(session: SessionDep, goal_id: int, user_id: UserIDDepends,
 
 @router.delete("/{goal_id}", name="내 목표 삭제", status_code=204)
 async def delete_goal(session: SessionDep, goal_id: int, user_id: UserIDDepends) -> None:
-    result = session.exec(delete(Goal).where(Goal.id == goal_id, Goal.user_id == user_id))
+    result = session.scalar(delete(Goal).where(Goal.id == goal_id, Goal.user_id == user_id))
 
     if result.rowcount == 0:
         raise HTTPException(status_code=404, detail="Goal not found")

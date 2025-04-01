@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, HTTPException
-from sqlmodel import select
+from sqlalchemy import select
 
 from app.core.security import verify_token
 from app.depends.db import SessionDep
@@ -16,7 +16,7 @@ def get_user_id(token: str = Depends(get_token_from_header)) -> int:
 
 def get_user(session: SessionDep, token: str = Depends(get_token_from_header)) -> User:
     payload = verify_token(token)
-    user = session.exec(select(User).where(User.id == int(payload["sub"]))).one_or_none()
+    user = session.scalar(select(User).where(User.id == int(payload["sub"])))
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

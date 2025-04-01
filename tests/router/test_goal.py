@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 
 from app.models.goal import Goal
 from app.models.user import User
-from sqlmodel import Session
+from sqlalchemy.orm import Session
 
 
 @pytest.fixture

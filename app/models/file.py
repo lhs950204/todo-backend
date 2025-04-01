@@ -1,10 +1,10 @@
 import os
-from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from fastapi import UploadFile
-from sqlmodel import Field, Relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.settings import settings
 from app.models.base import ModelBase
@@ -13,15 +13,17 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class File(ModelBase, table=True):
-    filename: str = Field(nullable=False)
-    original_filename: str = Field(nullable=False)
-    file_path: str = Field(nullable=False)  # media 폴더 내의 상대 경로
-    mime_type: str = Field(nullable=False)
-    size: int = Field(nullable=False)  # 파일 크기 (bytes)
+class File(ModelBase):
+    __tablename__ = "file"
 
-    user_id: int = Field(foreign_key="user.id", nullable=False)
-    user: "User" = Relationship(back_populates="files", sa_relationship_kwargs={"lazy": "selectin"})
+    filename: Mapped[str]
+    original_filename: Mapped[str]
+    file_path: Mapped[str]
+    mime_type: Mapped[str]
+    size: Mapped[int]
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user: Mapped["User"] = relationship(back_populates="files", lazy="selectin")
 
     def get_save_path(self) -> str:
         """

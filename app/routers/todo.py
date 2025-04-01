@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
-from sqlalchemy import func
-from sqlmodel import asc, case, delete, desc, select
+from sqlalchemy import asc, case, delete, desc, func, select
 
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
@@ -49,7 +48,7 @@ async def get_todos(
     else:
         query = query.order_by(asc(Todo.id)).limit(size + 1)
 
-    todos = session.exec(query).all()
+    todos = session.scalars(query).all()
 
     # 다음 페이지 커서 설정
     next_cursor = None
@@ -67,7 +66,7 @@ async def create_todo(
     todo_create: TodoCreate,
 ):
     # goal이 현재 사용자의 것인지 확인
-    goal = session.exec(select(Goal).where(Goal.id == todo_create.goal_id, Goal.user_id == user_id)).first()
+    goal = session.scalar(select(Goal).where(Goal.id == todo_create.goal_id, Goal.user_id == user_id))
     if not goal:
         raise HTTPException(status_code=404, detail="Goal not found")
 
@@ -87,11 +86,11 @@ async def create_todo(
 @router.get("/progress", name="할 일 진행 상황 조회")
 async def get_todo_progress(session: SessionDep, user_id: UserIDDepends, goal_id: int = Query(..., alias="goalId")):
     # Todo 테이블에서 total과 completed를 한 번의 쿼리로 조회
-    result = session.exec(
+    result = session.scalar(
         select(
             func.count(Todo.id).label("total"), func.sum(case((Todo.done == True, 1), else_=0)).label("completed")
         ).where(Todo.user_id == user_id, Todo.goal_id == goal_id)
-    ).first()
+    )
 
     total, completed = result
 
@@ -108,7 +107,7 @@ async def get_todo(
     user_id: UserIDDepends,
     todo_id: int,
 ):
-    todo = session.exec(select(Todo).where(Todo.id == todo_id, Todo.user_id == user_id)).first()
+    todo = session.scalar(select(Todo).where(Todo.id == todo_id, Todo.user_id == user_id))
 
     if not todo:
         raise HTTPException(status_code=404, detail="Todo not found")
@@ -123,14 +122,14 @@ async def update_todo(
     todo_id: int,
     todo_update: TodoUpdate,
 ):
-    todo = session.exec(select(Todo).where(Todo.id == todo_id, Todo.user_id == user_id)).first()
+    todo = session.scalar(select(Todo).where(Todo.id == todo_id, Todo.user_id == user_id))
 
     if not todo:
         raise HTTPException(status_code=404, detail="Todo not found")
 
     # goal_id가 변경되는 경우, 새로운 goal이 현재 사용자의 것인지 확인
     if todo_update.goal_id is not None:
-        goal = session.exec(select(Goal).where(Goal.id == todo_update.goal_id, Goal.user_id == user_id)).first()
+        goal = session.scalar(select(Goal).where(Goal.id == todo_update.goal_id, Goal.user_id == user_id))
         if not goal:
             raise HTTPException(status_code=404, detail="Goal not found")
 
@@ -147,7 +146,7 @@ async def update_todo(
 
 @router.delete("/{todo_id}", name="할 일 삭제", status_code=204)
 async def delete_todo(session: SessionDep, user_id: UserIDDepends, todo_id: int):
-    result = session.exec(delete(Todo).where(Todo.id == todo_id, Todo.user_id == user_id))
+    result = session.scalar(delete(Todo).where(Todo.id == todo_id, Todo.user_id == user_id))
 
     if result.rowcount == 0:
         raise HTTPException(status_code=404, detail="Todo not found")

@@ -1,4 +1,5 @@
-from sqlmodel import Session, select
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models.goal import Goal
 from app.models.user import User
@@ -41,7 +42,7 @@ async def test_update_goal(session: Session):
 
     # 검증
     stmt = select(Goal).where(Goal.id == goal.id)
-    updated_goal = session.exec(stmt).one()
+    updated_goal = session.scalar(stmt)
     assert updated_goal.title == "수정된 목표"
 
 
@@ -62,7 +63,7 @@ async def test_delete_goal(session: Session):
 
     # 검증
     stmt = select(Goal).where(Goal.id == goal.id)
-    deleted_goal = session.exec(stmt).first()
+    deleted_goal = session.scalar(stmt)
     assert deleted_goal is None
 
 
@@ -80,7 +81,7 @@ async def test_query_user_goals(session: Session):
 
     # 사용자의 목표 조회
     stmt = select(Goal).where(Goal.user_id == user.id)
-    user_goals = session.exec(stmt).all()
+    user_goals = session.scalars(stmt).all()
 
     # 검증
     assert len(user_goals) == 3
@@ -102,7 +103,7 @@ async def test_get_goal_by_id(session: Session):
 
     # ID로 목표 조회
     stmt = select(Goal).where(Goal.id == goal.id)
-    found_goal = session.exec(stmt).first()
+    found_goal = session.scalar(stmt)
 
     # 검증
     assert found_goal is not None

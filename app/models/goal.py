@@ -1,20 +1,23 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from sqlmodel import Field, Relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import ModelBase
-from app.models.user import User
 
 if TYPE_CHECKING:
     from app.models.note import Note
     from app.models.todo import Todo
+    from app.models.user import User
 
 
-class Goal(ModelBase, table=True):
-    title: str
+class Goal(ModelBase):
+    __tablename__ = "goal"
 
-    user_id: int = Field(foreign_key="user.id", nullable=False)
-    user: "User" = Relationship(back_populates="goals")
+    title: Mapped[str]
 
-    todos: list["Todo"] = Relationship(back_populates="goal", sa_relationship_kwargs={"lazy": "selectin"})
-    notes: list["Note"] = Relationship(back_populates="goal", sa_relationship_kwargs={"lazy": "selectin"})
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user: Mapped["User"] = relationship(back_populates="goals")
+
+    todos: Mapped[List["Todo"]] = relationship(back_populates="goal", lazy="selectin")
+    notes: Mapped[List["Note"]] = relationship(back_populates="goal", lazy="selectin")

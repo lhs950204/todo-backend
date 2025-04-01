@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, Depends, HTTPException
-from sqlmodel import select
+from sqlalchemy import select
 
 from app.core.security import (
     create_access_token,
@@ -14,14 +14,14 @@ from app.models.user import User
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-@router.post("/login", name="로그인")
+@router.post("/login", name="로그인", response_model_exclude={"hashed_password"})
 async def login(session: SessionDep, email: str = Body(...), password: str = Body(...)):
-    user = session.exec(select(User).where(User.email == email)).one_or_none()
+    user = session.scalar(select(User).where(User.email == email))
     if not user or not verify_password(password, user.hashed_password):
         raise HTTPException(status_code=500, detail="이메일 또는 비밀번호가 잘못되었습니다")
 
     return {
-        **user.model_dump(exclude={"hashed_password"}),
+        **user.__dict__,
         "access_token": create_access_token(user.id),
         "refresh_token": create_refresh_token(user.id),
     }
@@ -37,7 +37,7 @@ async def refresh_token(session: SessionDep, token: str = Depends(get_token_from
         raise HTTPException(status_code=500, detail="Invalid token type")
 
     # 사용자 확인
-    user = session.exec(select(User).where(User.id == int(payload["sub"]))).one_or_none()
+    user = session.scalar(select(User).where(User.id == int(payload["sub"])))
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

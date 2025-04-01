@@ -12,11 +12,10 @@ from .routers import auth, file, goal, note, todo, user
 # 임시코드임 나중에 alembic 으로 대체예정
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from sqlmodel import SQLModel
-
     from app.core.db import engine
+    from app.models.base import Base
 
-    SQLModel.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
     yield
 
 

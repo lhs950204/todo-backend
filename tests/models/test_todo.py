@@ -1,7 +1,8 @@
-from sqlmodel import Session, select
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from app.models.todo import Todo
 from app.models.goal import Goal
+from app.models.todo import Todo
 from app.models.user import User
 
 
@@ -60,7 +61,8 @@ async def test_update_todo(session: Session, default_user: User):
     session.refresh(todo)
 
     # 검증
-    updated_todo = session.exec(select(Todo).where(Todo.id == todo.id)).one()
+    updated_todo = session.scalar(select(Todo).where(Todo.id == todo.id))
+    assert updated_todo is not None
     assert updated_todo.title == "수정된 할일"
     assert updated_todo.done is True
 

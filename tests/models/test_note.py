@@ -1,5 +1,6 @@
 import pytest
-from sqlmodel import Session, select
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models.note import Note
 from app.models.user import User
@@ -30,7 +31,8 @@ async def test_create_note(session: Session, default_user: User, default_goal: G
 
 
 async def test_read_note(session: Session, default_note: Note):
-    db_note = session.exec(select(Note).where(Note.id == default_note.id)).one()
+    db_note = session.scalar(select(Note).where(Note.id == default_note.id))
+    assert db_note is not None
 
     assert db_note.id == default_note.id
     assert db_note.title == default_note.title
@@ -45,8 +47,9 @@ async def test_update_note(session: Session, default_note: Note):
     session.commit()
     session.refresh(default_note)
 
-    updated_note = session.exec(select(Note).where(Note.id == default_note.id)).one()
+    updated_note = session.scalar(select(Note).where(Note.id == default_note.id))
 
+    assert updated_note is not None
     assert updated_note.title == "수정된 노트"
     assert updated_note.content == "수정된 내용"
 
@@ -55,7 +58,7 @@ async def test_delete_note(session: Session, default_note: Note):
     session.delete(default_note)
     session.commit()
 
-    deleted_note = session.exec(select(Note).where(Note.id == default_note.id)).first()
+    deleted_note = session.scalar(select(Note).where(Note.id == default_note.id))
 
     assert deleted_note is None
 
@@ -63,12 +66,14 @@ async def test_delete_note(session: Session, default_note: Note):
 async def test_note_relationships(
     session: Session, default_note: Note, default_user: User, default_goal: Goal, default_todo: Todo
 ):
-    db_note = session.exec(select(Note).where(Note.id == default_note.id)).one()
+    db_note = session.scalar(select(Note).where(Note.id == default_note.id))
 
+    assert db_note is not None
     assert db_note.user.id == default_user.id
     assert db_note.goal.id == default_goal.id
     assert db_note.todo.id == default_todo.id
 
-    db_user = session.exec(select(User).where(User.id == default_user.id)).one()
+    db_user = session.scalar(select(User).where(User.id == default_user.id))
 
+    assert db_user is not None
     assert db_user.notes[0].id == default_note.id

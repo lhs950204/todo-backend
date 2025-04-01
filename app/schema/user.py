@@ -1,8 +1,7 @@
-from pydantic import EmailStr
-from sqlmodel import SQLModel
+from pydantic import BaseModel, EmailStr
 
 
-class UserRegisterSchema(SQLModel):
+class UserRegisterSchema(BaseModel):
     email: EmailStr
     name: str
     password: str

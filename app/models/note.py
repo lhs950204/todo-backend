@@ -1,21 +1,28 @@
-from sqlmodel import Field, Relationship
+from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import ModelBase
-from app.models.goal import Goal
-from app.models.todo import Todo
-from app.models.user import User
+
+if TYPE_CHECKING:
+    from app.models.goal import Goal
+    from app.models.todo import Todo
+    from app.models.user import User
 
 
-class Note(ModelBase, table=True):
-    title: str
-    content: str
-    link_url: str
+class Note(ModelBase):
+    __tablename__ = "note"
 
-    user_id: int = Field(foreign_key="user.id", nullable=False)
-    user: "User" = Relationship(back_populates="notes")
+    title: Mapped[str]
+    content: Mapped[str]
+    link_url: Mapped[str]
 
-    goal_id: int = Field(foreign_key="goal.id", nullable=False)
-    goal: "Goal" = Relationship(back_populates="notes")
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user: Mapped["User"] = relationship(back_populates="notes")
 
-    todo_id: int = Field(foreign_key="todo.id", nullable=False)
-    todo: "Todo" = Relationship(back_populates="note")
+    goal_id: Mapped[int] = mapped_column(ForeignKey("goal.id"), nullable=False)
+    goal: Mapped["Goal"] = relationship(back_populates="notes")
+
+    todo_id: Mapped[int] = mapped_column(ForeignKey("todo.id"), nullable=False)
+    todo: Mapped["Todo"] = relationship(back_populates="note")

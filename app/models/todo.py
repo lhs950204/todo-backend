@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from sqlmodel import Field, Relationship
+from sqlalchemy import Boolean, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import ModelBase
 
@@ -10,17 +11,19 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class Todo(ModelBase, table=True):
-    title: str
-    done: bool = Field(default=False)
-    link_url: str | None = None
-    file_url: str | None = None
+class Todo(ModelBase):
+    __tablename__ = "todo"
 
-    user_id: int = Field(foreign_key="user.id", nullable=False)
-    user: "User" = Relationship(back_populates="todos")
+    title: Mapped[str]
+    done: Mapped[bool] = mapped_column(Boolean, default=False)
+    link_url: Mapped[Optional[str]]
+    file_url: Mapped[Optional[str]]
 
-    goal_id: int = Field(foreign_key="goal.id", nullable=False)
-    goal: "Goal" = Relationship(back_populates="todos")
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user: Mapped["User"] = relationship(back_populates="todos")
 
-    note_id: int = Field(foreign_key="note.id", nullable=True)
-    note: "Note" = Relationship(back_populates="todo")
+    goal_id: Mapped[int] = mapped_column(ForeignKey("goal.id"), nullable=False)
+    goal: Mapped["Goal"] = relationship(back_populates="todos")
+
+    note_id: Mapped[Optional[int]] = mapped_column(ForeignKey("note.id"), nullable=True)
+    note: Mapped[Optional["Note"]] = relationship(back_populates="todo")

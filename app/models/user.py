@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from pydantic import EmailStr
-from sqlmodel import Field, Relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import ModelBase
 
@@ -12,12 +11,14 @@ if TYPE_CHECKING:
     from app.models.todo import Todo
 
 
-class User(ModelBase, table=True):
-    email: EmailStr = Field(unique=True)
-    hashed_password: str
-    name: str
+class User(ModelBase):
+    __tablename__ = "user"
 
-    goals: list["Goal"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
-    todos: list["Todo"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
-    notes: list["Note"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
-    files: list["File"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
+    email: Mapped[str] = mapped_column(unique=True)
+    hashed_password: Mapped[str]
+    name: Mapped[str]
+
+    goals: Mapped[List["Goal"]] = relationship(back_populates="user", lazy="selectin")
+    todos: Mapped[List["Todo"]] = relationship(back_populates="user", lazy="selectin")
+    notes: Mapped[List["Note"]] = relationship(back_populates="user", lazy="selectin")
+    files: Mapped[List["File"]] = relationship(back_populates="user", lazy="selectin")

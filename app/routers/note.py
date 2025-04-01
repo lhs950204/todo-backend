@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
-from sqlalchemy import func
-from sqlmodel import delete, desc, select
+from sqlalchemy import delete, desc, func, select
 
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
@@ -35,7 +34,7 @@ async def get_notes(
     # 정렬 및 제한
     query = query.order_by(desc(Note.id)).limit(size + 1)
 
-    notes = session.exec(query).all()
+    notes = session.scalars(query).all()
 
     # 다음 페이지 커서 설정
     next_cursor = None
@@ -49,7 +48,7 @@ async def get_notes(
 @router.post("", name="노트 생성", response_model=Note)
 async def create_note(session: SessionDep, user_id: UserIDDepends, note: NoteCreate):
     # goal이 현재 사용자의 것인지 확인
-    goal = session.exec(select(Goal).where(Goal.id == note.goal_id, Goal.user_id == user_id)).first()
+    goal = session.scalar(select(Goal).where(Goal.id == note.goal_id, Goal.user_id == user_id))
     if not goal:
         raise HTTPException(status_code=404, detail="Goal not found")
 
@@ -69,7 +68,7 @@ async def create_note(session: SessionDep, user_id: UserIDDepends, note: NoteCre
 
 @router.get("/{note_id}", name="노트 조회", response_model=Note)
 async def get_note(session: SessionDep, user_id: UserIDDepends, note_id: int):
-    note = session.exec(select(Note).where(Note.id == note_id, Note.user_id == user_id)).first()
+    note = session.scalar(select(Note).where(Note.id == note_id, Note.user_id == user_id))
 
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
@@ -79,7 +78,7 @@ async def get_note(session: SessionDep, user_id: UserIDDepends, note_id: int):
 
 @router.patch("/{note_id}", name="노트 수정", response_model=Note)
 async def update_note(session: SessionDep, user_id: UserIDDepends, note_id: int, note: NoteUpdate):
-    db_note = session.exec(select(Note).where(Note.id == note_id, Note.user_id == user_id)).first()
+    db_note = session.scalar(select(Note).where(Note.id == note_id, Note.user_id == user_id))
 
     if not db_note:
         raise HTTPException(status_code=404, detail="Note not found")
@@ -97,7 +96,7 @@ async def update_note(session: SessionDep, user_id: UserIDDepends, note_id: int,
 
 @router.delete("/{note_id}", name="노트 삭제", status_code=204)
 async def delete_note(session: SessionDep, user_id: UserIDDepends, note_id: int):
-    result = session.exec(delete(Note).where(Note.id == note_id, Note.user_id == user_id))
+    result = session.scalar(delete(Note).where(Note.id == note_id, Note.user_id == user_id))
 
     if result.rowcount == 0:
         raise HTTPException(status_code=404, detail="Note not found")
