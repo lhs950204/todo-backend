@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
+from app.models.note import Note
 from app.models.todo import Todo
 from app.models.user import User
 from app.models.goal import Goal
@@ -20,6 +21,22 @@ def default_todo(session: Session, default_user: User, default_goal: Goal) -> To
     session.commit()
     session.refresh(todo)
     return todo
+
+
+@pytest.fixture
+def default_note(session: Session, default_user: User, default_goal: Goal, default_todo: Todo) -> Note:
+    note = Note(
+        title="테스트 노트",
+        content="테스트 내용",
+        link_url="https://example.com",
+        user_id=default_user.id,
+        goal_id=default_goal.id,
+        todo_id=default_todo.id,
+    )
+    session.add(note)
+    session.commit()
+    session.refresh(note)
+    return note
 
 
 async def test_create_todo(client: TestClient, login_user, default_goal: Goal):
@@ -213,3 +230,23 @@ async def test_update_todo_with_invalid_goal(client: TestClient, login_user, def
     )
     assert response.status_code == 404
     assert response.json()["detail"] == "Goal not found"
+
+
+async def test_get_todo_with_note(client: TestClient, login_user, default_todo: Todo, default_note: Note):
+    response = client.get(
+        f"/todos/{default_todo.id}",
+        headers={"Authorization": f"Bearer {login_user['access_token']}"},
+    )
+    assert response.status_code == 200
+    assert response.json()["note_id"] == default_note.id
+
+
+async def test_get_todos_with_note(client: TestClient, login_user, default_goal: Goal, default_note: Note):
+    response = client.get(
+        f"/todos?goalId={default_goal.id}",
+        headers={"Authorization": f"Bearer {login_user['access_token']}"},
+    )
+    assert response.status_code == 200
+    assert response.json()["total_count"] == 1
+    assert len(response.json()["todos"]) == 1
+    assert response.json()["todos"][0]["note_id"] == default_note.id
