@@ -2,7 +2,6 @@ from typing import Sequence
 
 from pydantic import BaseModel, Field
 
-from app.models.todo import Todo
 from app.schema.common import CursorPaginationBase
 
 
@@ -21,5 +20,18 @@ class TodoUpdate(BaseModel):
     goal_id: int | None = Field(None, alias="goalId")
 
 
+class TodoResponse(BaseModel):
+    id: int
+    title: str
+    done: bool
+    link_url: str | None = None
+    file_url: str | None = None
+    user_id: int
+    goal_id: int
+    created_at: str
+    updated_at: str
+    note_id: int | None = None
+
+
 class TodoList(CursorPaginationBase):
-    todos: Sequence[Todo]
+    todos: Sequence[TodoResponse]

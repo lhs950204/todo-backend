@@ -5,9 +5,10 @@ from sqlmodel import asc, case, delete, desc, select
 from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
 from app.models.goal import Goal
+from app.models.note import Note
 from app.models.todo import Todo
 from app.schema.common import SortOrder
-from app.schema.todo import TodoCreate, TodoList, TodoUpdate
+from app.schema.todo import TodoCreate, TodoList, TodoResponse, TodoUpdate
 
 router = APIRouter(prefix="/todos", tags=["Todo"])
 
@@ -57,10 +58,26 @@ async def get_todos(
         next_cursor = todos[-1].id
         todos = todos[:size]
 
-    return TodoList(todos=todos, next_cursor=next_cursor, total_count=total_count)
+    todos_response = [
+        TodoResponse(
+            id=todo.id,
+            title=todo.title,
+            done=todo.done,
+            link_url=todo.link_url,
+            file_url=todo.file_url,
+            user_id=todo.user_id,
+            goal_id=todo.goal_id,
+            created_at=str(todo.created_at),
+            updated_at=str(todo.updated_at),
+            note_id=todo.note_id,
+        )
+        for todo in todos
+    ]
+
+    return TodoList(todos=todos_response, next_cursor=next_cursor, total_count=total_count)
 
 
-@router.post("", name="할 일 생성", response_model=Todo)
+@router.post("", name="할 일 생성", response_model=TodoResponse)
 async def create_todo(
     session: SessionDep,
     user_id: UserIDDepends,
@@ -81,7 +98,18 @@ async def create_todo(
     session.add(new_todo)
     session.commit()
     session.refresh(new_todo)
-    return new_todo
+    return TodoResponse(
+        id=new_todo.id,
+        title=new_todo.title,
+        done=new_todo.done,
+        link_url=new_todo.link_url,
+        file_url=new_todo.file_url,
+        user_id=new_todo.user_id,
+        goal_id=new_todo.goal_id,
+        created_at=str(new_todo.created_at),
+        updated_at=str(new_todo.updated_at),
+        note_id=new_todo.note_id,
+    )
 
 
 @router.get("/progress", name="할 일 진행 상황 조회")
@@ -102,21 +130,34 @@ async def get_todo_progress(session: SessionDep, user_id: UserIDDepends, goal_id
     return {"progress": completed / total}
 
 
-@router.get("/{todo_id}", name="할 일 상세 조회", response_model=Todo)
+@router.get("/{todo_id}", name="할 일 상세 조회", response_model=TodoResponse)
 async def get_todo(
     session: SessionDep,
     user_id: UserIDDepends,
     todo_id: int,
 ):
+    # 노트 정보 포함하여 조회
     todo = session.exec(select(Todo).where(Todo.id == todo_id, Todo.user_id == user_id)).first()
 
     if not todo:
         raise HTTPException(status_code=404, detail="Todo not found")
 
-    return todo
+    # TodoResponse 모델로 변환하여 반환
+    return TodoResponse(
+        id=todo.id,
+        title=todo.title,
+        done=todo.done,
+        link_url=todo.link_url,
+        file_url=todo.file_url,
+        user_id=todo.user_id,
+        goal_id=todo.goal_id,
+        created_at=str(todo.created_at),
+        updated_at=str(todo.updated_at),
+        note_id=todo.note_id,
+    )
 
 
-@router.patch("/{todo_id}", name="할 일 수정", response_model=Todo)
+@router.patch("/{todo_id}", name="할 일 수정", response_model=TodoResponse)
 async def update_todo(
     session: SessionDep,
     user_id: UserIDDepends,
@@ -142,7 +183,18 @@ async def update_todo(
     session.commit()
     session.refresh(todo)
 
-    return todo
+    return TodoResponse(
+        id=todo.id,
+        title=todo.title,
+        done=todo.done,
+        link_url=todo.link_url,
+        file_url=todo.file_url,
+        user_id=todo.user_id,
+        goal_id=todo.goal_id,
+        created_at=str(todo.created_at),
+        updated_at=str(todo.updated_at),
+        note_id=todo.note_id,
+    )
 
 
 @router.delete("/{todo_id}", name="할 일 삭제", status_code=204)
