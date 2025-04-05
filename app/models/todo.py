@@ -10,16 +10,19 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class Todo(ModelBase, table=True):
+class TodoBase(ModelBase):
     title: str
     done: bool = Field(default=False)
     link_url: str | None = None
     file_url: str | None = None
 
     user_id: int = Field(foreign_key="user.id", nullable=False)
+    goal_id: int = Field(foreign_key="goal.id", nullable=False)
+
+
+class Todo(TodoBase, table=True):
     user: "User" = Relationship(back_populates="todos")
 
-    goal_id: int = Field(foreign_key="goal.id", nullable=False)
     goal: "Goal" = Relationship(back_populates="todos")
 
     note: "Note" = Relationship(back_populates="todo", sa_relationship_kwargs={"uselist": False, "lazy": "selectin"})

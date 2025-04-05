@@ -10,11 +10,12 @@ if TYPE_CHECKING:
     from app.models.todo import Todo
 
 
-class Goal(ModelBase, table=True):
+class GoalBase(ModelBase):
     title: str
-
     user_id: int = Field(foreign_key="user.id", nullable=False)
-    user: "User" = Relationship(back_populates="goals")
 
+
+class Goal(GoalBase, table=True):
+    user: "User" = Relationship(back_populates="goals")
     todos: list["Todo"] = Relationship(back_populates="goal", sa_relationship_kwargs={"lazy": "selectin"})
     notes: list["Note"] = Relationship(back_populates="goal", sa_relationship_kwargs={"lazy": "selectin"})

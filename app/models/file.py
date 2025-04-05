@@ -13,14 +13,16 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class File(ModelBase, table=True):
+class FileBase(ModelBase):
     filename: str = Field(nullable=False)
     original_filename: str = Field(nullable=False)
     file_path: str = Field(nullable=False)  # media 폴더 내의 상대 경로
     mime_type: str = Field(nullable=False)
     size: int = Field(nullable=False)  # 파일 크기 (bytes)
-
     user_id: int = Field(foreign_key="user.id", nullable=False)
+
+
+class File(FileBase, table=True):
     user: "User" = Relationship(back_populates="files", sa_relationship_kwargs={"lazy": "selectin"})
 
     def get_save_path(self) -> str:

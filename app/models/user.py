@@ -12,11 +12,13 @@ if TYPE_CHECKING:
     from app.models.todo import Todo
 
 
-class User(ModelBase, table=True):
+class UserBase(ModelBase):
     email: EmailStr = Field(unique=True)
     hashed_password: str
     name: str
 
+
+class User(UserBase, table=True):
     goals: list["Goal"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
     todos: list["Todo"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
     notes: list["Note"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})

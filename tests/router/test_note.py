@@ -91,7 +91,9 @@ async def test_get_notes_with_cursor(
     assert response.json()["next_cursor"] is None
 
 
-async def test_get_note(client: TestClient, login_user, default_note: Note):
+async def test_get_note(
+    client: TestClient, login_user, default_note: Note, default_user: User, default_goal: Goal, default_todo: Todo
+):
     response = client.get(
         f"/notes/{default_note.id}",
         headers={"Authorization": f"Bearer {login_user['access_token']}"},
@@ -99,6 +101,11 @@ async def test_get_note(client: TestClient, login_user, default_note: Note):
     assert response.status_code == 200
     assert response.json()["title"] == "테스트 노트"
     assert response.json()["content"] == "테스트 내용"
+    assert response.json()["link_url"] == "https://example.com"
+    assert response.json()["user_id"] == default_user.id
+    assert response.json()["goal_id"] == default_goal.id
+    assert response.json()["todo_id"] == default_todo.id
+    assert response.json()["todo"]["id"] == default_todo.id
 
 
 async def test_get_note_not_found(client: TestClient, login_user):

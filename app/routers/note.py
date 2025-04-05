@@ -6,7 +6,7 @@ from app.depends.db import SessionDep
 from app.depends.user import UserIDDepends
 from app.models.goal import Goal
 from app.models.note import Note
-from app.schema.note import NoteCreate, NoteList, NoteUpdate
+from app.schema.note import NoteCreate, NoteList, NoteResponse, NoteUpdate
 
 router = APIRouter(prefix="/notes", tags=["Note"])
 
@@ -46,7 +46,7 @@ async def get_notes(
     return NoteList(notes=notes, next_cursor=next_cursor, total_count=total_count)
 
 
-@router.post("", name="노트 생성", response_model=Note)
+@router.post("", name="노트 생성", response_model=NoteResponse)
 async def create_note(session: SessionDep, user_id: UserIDDepends, note: NoteCreate):
     # goal이 현재 사용자의 것인지 확인
     goal = session.exec(select(Goal).where(Goal.id == note.goal_id, Goal.user_id == user_id)).first()
@@ -67,7 +67,7 @@ async def create_note(session: SessionDep, user_id: UserIDDepends, note: NoteCre
     return new_note
 
 
-@router.get("/{note_id}", name="노트 조회", response_model=Note)
+@router.get("/{note_id}", name="노트 조회", response_model=NoteResponse)
 async def get_note(session: SessionDep, user_id: UserIDDepends, note_id: int):
     note = session.exec(select(Note).where(Note.id == note_id, Note.user_id == user_id)).first()
 
@@ -77,7 +77,7 @@ async def get_note(session: SessionDep, user_id: UserIDDepends, note_id: int):
     return note
 
 
-@router.patch("/{note_id}", name="노트 수정", response_model=Note)
+@router.patch("/{note_id}", name="노트 수정", response_model=NoteResponse)
 async def update_note(session: SessionDep, user_id: UserIDDepends, note_id: int, note: NoteUpdate):
     db_note = session.exec(select(Note).where(Note.id == note_id, Note.user_id == user_id)).first()
 

@@ -2,7 +2,10 @@ from typing import Sequence
 
 from pydantic import BaseModel, Field
 
-from app.models.note import Note
+from app.models.goal import GoalBase
+from app.models.note import NoteBase
+from app.models.todo import TodoBase
+from app.models.user import UserBase
 from app.schema.common import CursorPaginationBase
 
 
@@ -20,5 +23,11 @@ class NoteUpdate(BaseModel):
     link_url: str | None = Field(None, alias="linkUrl")
 
 
+class NoteResponse(NoteBase):
+    todo: TodoBase | None = None
+    goal: GoalBase | None = None
+    user: UserBase | None = None
+
+
 class NoteList(CursorPaginationBase):
-    notes: Sequence[Note]
+    notes: Sequence[NoteResponse]
