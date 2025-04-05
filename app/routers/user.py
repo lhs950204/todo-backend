@@ -4,7 +4,7 @@ from sqlmodel import select
 from app.core.security import get_password_hash
 from app.depends.db import SessionDep
 from app.depends.user import UserDepends
-from app.models.user import User
+from app.models.user import User, UserBase
 from app.schema.user import UserRegisterSchema
 
 router = APIRouter(prefix="/user", tags=["User"])
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/user", tags=["User"])
 @router.post(
     "",
     name="회원 가입",
-    response_model=User,
+    response_model=UserBase,
     response_model_exclude={"hashed_password"},
 )
 async def register_user(user_in: UserRegisterSchema, session: SessionDep):
@@ -36,7 +36,7 @@ async def register_user(user_in: UserRegisterSchema, session: SessionDep):
 @router.get(
     "",
     name="회원정보 조회",
-    response_model=User,
+    response_model=UserBase,
     response_model_exclude={"hashed_password"},
 )
 async def get_user(user: UserDepends):

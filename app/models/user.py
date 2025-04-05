@@ -14,11 +14,12 @@ if TYPE_CHECKING:
 
 class UserBase(ModelBase):
     email: EmailStr = Field(unique=True)
-    hashed_password: str
     name: str
 
 
 class User(UserBase, table=True):
+    hashed_password: str
+
     goals: list["Goal"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
     todos: list["Todo"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})
     notes: list["Note"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "selectin"})

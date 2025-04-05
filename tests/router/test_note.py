@@ -106,6 +106,7 @@ async def test_get_note(
     assert response.json()["goal_id"] == default_goal.id
     assert response.json()["todo_id"] == default_todo.id
     assert response.json()["todo"]["id"] == default_todo.id
+    assert "hashed_password" not in response.json()["user"]
 
 
 async def test_get_note_not_found(client: TestClient, login_user):
