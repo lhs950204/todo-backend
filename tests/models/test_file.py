@@ -44,9 +44,9 @@ def temp_upload_file(tmp_path):
 
 
 class TestFile:
-    def test_get_full_path(self, test_file):
-        full_path = test_file.get_full_path()
-        expected_path = str(settings.MEDIA_ROOT / f"user_{test_file.user_id}/test.txt")
+    def test_get_full_path(self, test_file: File):
+        full_path = test_file.get_save_path()
+        expected_path = str(Path(settings.MEDIA_ROOT) / f"user_{test_file.user_id}/test.txt")
         assert full_path == expected_path
 
     @pytest.mark.asyncio
@@ -77,7 +77,7 @@ class TestFile:
 
         # 파일 저장 테스트
         await test_file.save_file(content)
-        saved_path = Path(test_file.get_full_path())
+        saved_path = Path(test_file.get_save_path())
         assert saved_path.exists()
         assert saved_path.read_bytes() == content
 
