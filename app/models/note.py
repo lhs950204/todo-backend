@@ -14,7 +14,7 @@ class NoteBase(ModelBase):
     link_url: Optional[str] = Field(default=None, nullable=True)
     user_id: int = Field(foreign_key="user.id", nullable=False)
     goal_id: int = Field(foreign_key="goal.id", nullable=False)
-    todo_id: int = Field(foreign_key="todo.id", nullable=False)
+    todo_id: int = Field(foreign_key="todo.id", nullable=False, unique=True)
 
 
 class Note(NoteBase, table=True):

@@ -22,9 +22,7 @@ class TodoBase(ModelBase):
 
 class Todo(TodoBase, table=True):
     user: "User" = Relationship(back_populates="todos")
-
     goal: "Goal" = Relationship(back_populates="todos")
-
     note: "Note" = Relationship(back_populates="todo", sa_relationship_kwargs={"uselist": False, "lazy": "selectin"})
 
     @property
