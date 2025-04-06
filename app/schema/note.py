@@ -12,7 +12,7 @@ from app.schema.common import CursorPaginationBase
 class NoteCreate(BaseModel):
     title: str
     content: str
-    link_url: str
+    link_url: str | None = Field(None)
     goal_id: int
     todo_id: int
 
