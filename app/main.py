@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.core.settings import settings
+from app.middleware import SQLAlchemyExceptionMiddleware
 
 from .routers import auth, file, goal, note, todo, user
 
@@ -29,6 +30,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(SQLAlchemyExceptionMiddleware)
 
 app.mount("/media", StaticFiles(directory=settings.MEDIA_ROOT), name="media")
 

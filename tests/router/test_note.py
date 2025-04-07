@@ -176,3 +176,20 @@ async def test_create_note_with_invalid_goal(client: TestClient, login_user, ses
     )
     assert response.status_code == 404
     assert response.json()["detail"] == "Goal not found"
+
+
+async def test_create_note_with_already_linked_todo(
+    client: TestClient, login_user, default_goal: Goal, default_todo: Todo, default_note: Note
+):
+    response = client.post(
+        "/notes",
+        headers={"Authorization": f"Bearer {login_user['access_token']}"},
+        json={
+            "title": "새로운 노트",
+            "content": "노트 내용",
+            "link_url": "https://example.com",
+            "goal_id": default_goal.id,
+            "todo_id": default_note.todo_id,
+        },
+    )
+    assert response.status_code == 409

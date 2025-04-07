@@ -43,6 +43,7 @@ async def get_notes(
         next_cursor = notes[-1].id
         notes = notes[:size]
 
+    # FastAPI가 response_model을 통해 자동으로 Note에서 NoteResponse로 변환
     return NoteList(notes=notes, next_cursor=next_cursor, total_count=total_count)
 
 
@@ -97,9 +98,11 @@ async def update_note(session: SessionDep, user_id: UserIDDepends, note_id: int,
 
 @router.delete("/{note_id}", name="노트 삭제", status_code=204)
 async def delete_note(session: SessionDep, user_id: UserIDDepends, note_id: int):
-    result = session.exec(delete(Note).where(Note.id == note_id, Note.user_id == user_id))
-
-    if result.rowcount == 0:
+    # 노트가 존재하는지 먼저 확인
+    note = session.exec(select(Note).where(Note.id == note_id, Note.user_id == user_id)).first()
+    if not note:
         raise HTTPException(status_code=404, detail="Note not found")
 
+    # 노트 삭제
+    session.delete(note)
     session.commit()
