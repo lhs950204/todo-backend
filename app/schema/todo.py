@@ -2,6 +2,7 @@ from typing import Sequence
 
 from pydantic import BaseModel, Field
 
+from app.models.note import NoteBase
 from app.schema.common import CursorPaginationBase
 
 
@@ -31,6 +32,7 @@ class TodoResponse(BaseModel):
     created_at: str
     updated_at: str
     note_id: int | None = None
+    note: NoteBase | None = None
 
 
 class TodoList(CursorPaginationBase):
